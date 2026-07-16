@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>P.S. Shelf — Never lose a Pinterest idea again</title>
+<meta name="description" content="P.S. Shelf turns Pinterest into your visual second brain. Save pins with notes, projects and budgets — then find them instantly.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#FBFAF7; --board:#F2EFE7; --ink:#1F2A26; --muted:#5f6d66;
+  --pine:#1F4D3F; --pine-dark:#16382e; --pin:#C4452F;
+  --line:#E3E0D6; --tape:#F0E6C8;
+  --display:"Bricolage Grotesque",sans-serif; --body:"Inter",system-ui,sans-serif; --mono:"IBM Plex Mono",monospace;
+}
+*{box-sizing:border-box;margin:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--body);color:var(--ink);background:var(--paper);line-height:1.55;font-size:16px}
+a{color:inherit}
+.wrap{max-width:1120px;margin:0 auto;padding:0 24px}
+
+/* masking-tape label — recurring structural device */
+.tape{display:inline-block;font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;
+  background:var(--tape);padding:5px 14px;transform:rotate(-1.5deg);color:#6b5c2e;
+  box-shadow:0 1px 2px rgba(0,0,0,.08)}
+
+/* header */
+header{position:sticky;top:0;background:rgba(251,250,247,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);z-index:50}
+.nav{display:flex;align-items:center;justify-content:space-between;height:60px}
+.logo{font-family:var(--display);font-weight:800;font-size:20px;display:flex;align-items:center;gap:8px;text-decoration:none}
+.pin-dot{width:12px;height:12px;border-radius:50%;background:var(--pin);box-shadow:inset -2px -2px 3px rgba(0,0,0,.35)}
+.nav-links{display:flex;gap:26px;align-items:center;font-size:14px;font-weight:500}
+.nav-links a{text-decoration:none;color:var(--muted)}
+.nav-links a:hover{color:var(--ink)}
+.btn{display:inline-block;background:var(--pine);color:#fff;text-decoration:none;font-weight:600;
+  padding:12px 22px;border-radius:10px;transition:background .15s}
+.btn:hover{background:var(--pine-dark)}
+.btn.small{padding:8px 16px;font-size:14px}
+.btn.ghost{background:transparent;color:var(--pine);border:1.5px solid var(--pine)}
+.btn.ghost:hover{background:#eef3f0}
+
+/* hero */
+.hero{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;padding:72px 0 88px}
+.hero h1{font-family:var(--display);font-weight:800;font-size:clamp(38px,4.6vw,58px);line-height:1.04;letter-spacing:-.01em}
+.hero h1 em{font-style:normal;color:var(--pine)}
+.hero p.lead{margin:20px 0 28px;font-size:18px;color:var(--muted);max-width:44ch}
+.hero .ctas{display:flex;gap:12px;flex-wrap:wrap}
+.hero .fine{margin-top:14px;font-size:13px;color:var(--muted)}
+
+/* the pinboard — signature element */
+.board{position:relative;background:var(--board);border:1px solid var(--line);border-radius:16px;
+  height:440px;box-shadow:inset 0 2px 10px rgba(0,0,0,.05)}
+.board .tape{position:absolute;top:-14px;left:24px;z-index:3}
+.pcard{position:absolute;width:150px;background:#fff;border:1px solid var(--line);border-radius:8px;
+  padding:8px 8px 10px;box-shadow:0 3px 10px rgba(0,0,0,.10);
+  transition:transform 1.1s cubic-bezier(.22,1,.36,1) var(--d,0s), box-shadow .3s;
+  transform:translate(var(--sx),var(--sy)) rotate(var(--sr))}
+.board.sorted .pcard{transform:translate(var(--ex),var(--ey)) rotate(0deg)}
+.pcard::before{content:"";position:absolute;top:-6px;left:50%;margin-left:-6px;width:12px;height:12px;
+  border-radius:50%;background:var(--pin);box-shadow:inset -2px -2px 3px rgba(0,0,0,.35),0 1px 2px rgba(0,0,0,.25)}
+.pcard .swatch{height:64px;border-radius:5px;margin-bottom:7px}
+.pcard .t{font-size:11px;font-weight:600;line-height:1.3}
+.pcard .note{font-family:var(--mono);font-size:9.5px;color:var(--muted);margin-top:4px}
+.pcard .chips{margin-top:6px;display:flex;gap:4px;flex-wrap:wrap}
+.pcard .chip{font-family:var(--mono);font-size:8.5px;background:#edf3ef;color:var(--pine);border-radius:99px;padding:1px 6px}
+@media (prefers-reduced-motion:reduce){
+  .pcard{transition:none;transform:translate(var(--ex),var(--ey))}
+}
+
+/* problem strip */
+.problem{background:var(--ink);color:#f2f1ec;padding:64px 0}
+.problem .wrap{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}
+.problem h2{font-family:var(--display);font-weight:700;font-size:clamp(26px,3vw,36px);line-height:1.15}
+.problem p{color:#b9c2bd;margin-top:14px}
+.flow{font-family:var(--mono);font-size:14px;line-height:2.1}
+.flow .bad{color:#e08a7a}
+.flow .good{color:#8fd0b4}
+.flow .arrow{color:#5f6d66;padding:0 6px}
+
+/* features */
+section.features{padding:88px 0}
+.sec-head{max-width:620px;margin-bottom:44px}
+.sec-head h2{font-family:var(--display);font-weight:700;font-size:clamp(26px,3vw,36px);margin-top:14px}
+.sec-head p{color:var(--muted);margin-top:10px}
+.fgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.fcard{background:#fff;border:1px solid var(--line);border-radius:12px;padding:24px}
+.fcard h3{font-family:var(--display);font-weight:700;font-size:18px;margin-bottom:8px}
+.fcard p{font-size:14.5px;color:var(--muted)}
+.fcard .ex{margin-top:14px;font-family:var(--mono);font-size:12px;background:var(--board);
+  border-left:3px solid var(--pine);padding:10px 12px;border-radius:0 8px 8px 0;color:#41504a}
+
+/* how it works — a real sequence, so numbered */
+.how{background:var(--board);padding:80px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:40px}
+.step .num{font-family:var(--display);font-weight:800;font-size:40px;color:var(--pine);line-height:1}
+.step h3{font-size:17px;margin:10px 0 6px;font-family:var(--display);font-weight:700}
+.step p{font-size:14.5px;color:var(--muted)}
+
+/* pricing */
+.pricing{padding:88px 0}
+.pgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:8px}
+.plan{background:#fff;border:1px solid var(--line);border-radius:14px;padding:28px;display:flex;flex-direction:column}
+.plan.featured{border:2px solid var(--pine);position:relative}
+.plan.featured .tape{position:absolute;top:-14px;right:20px}
+.plan h3{font-family:var(--display);font-weight:700;font-size:19px}
+.plan .price{font-family:var(--display);font-weight:800;font-size:34px;margin:10px 0 2px}
+.plan .per{font-size:13px;color:var(--muted)}
+.plan ul{list-style:none;padding:0;margin:18px 0 24px;font-size:14.5px;color:#41504a;flex:1}
+.plan li{padding:5px 0 5px 24px;position:relative}
+.plan li::before{content:"";position:absolute;left:4px;top:12px;width:7px;height:7px;border-radius:50%;background:var(--pin)}
+.plan .btn{text-align:center}
+
+/* footer cta + footer */
+.final{background:var(--pine);color:#fff;padding:76px 0;text-align:center}
+.final h2{font-family:var(--display);font-weight:800;font-size:clamp(28px,3.4vw,42px)}
+.final p{color:#cfe0d7;margin:12px auto 26px;max-width:46ch}
+.final .btn{background:#fff;color:var(--pine)}
+.final .btn:hover{background:var(--tape);color:var(--pine-dark)}
+footer.site{padding:30px 0;font-size:13px;color:var(--muted)}
+footer.site .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
+
+:focus-visible{outline:3px solid var(--pin);outline-offset:2px}
+
+@media (max-width:900px){
+  .hero{grid-template-columns:1fr;padding:48px 0 64px}
+  .board{height:400px}
+  .problem .wrap,.fgrid,.steps,.pgrid{grid-template-columns:1fr}
+  .nav-links a:not(.btn){display:none}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <a class="logo" href="#"><span class="pin-dot"></span>P.S. Shelf</a>
+    <nav class="nav-links">
+      <a href="#features">Features</a>
+      <a href="#how">How it works</a>
+      <a href="#pricing">Pricing</a>
+      <a class="btn small" href="#pricing">Add to Chrome — free</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+<div class="wrap hero">
+  <div>
+    <span class="tape">Chrome extension for Pinterest</span>
+    <h1 style="margin-top:18px">Never lose a<br>Pinterest idea <em>again.</em></h1>
+    <p class="lead">You've saved 4,000 pins. Can you find the white kitchen with the black hardware you loved in March? P.S. Shelf adds notes, projects, budgets and real search to everything you save.</p>
+    <div class="ctas">
+      <a class="btn" href="#pricing">Add to Chrome — free</a>
+      <a class="btn ghost" href="#how">See how it works</a>
+    </div>
+    <p class="fine">Free for your first 200 pins. No card required.</p>
+  </div>
+
+  <div class="board" id="board" aria-label="Illustration: scattered pins sorting themselves into a project">
+    <span class="tape">Project: Kitchen remodel</span>
+    <!-- cards get scatter (--sx/--sy/--sr) and end (--ex/--ey) positions -->
+    <div class="pcard" style="--sx:30px;--sy:250px;--sr:-9deg;--ex:24px;--ey:44px;--d:.1s">
+      <div class="swatch" style="background:linear-gradient(135deg,#e9e4da,#cfc6b6)"></div>
+      <div class="t">White shaker cabinets</div>
+      <div class="note">quote: $8,200 · must have</div>
+      <div class="chips"><span class="chip">cabinets</span><span class="chip">decided</span></div>
+    </div>
+    <div class="pcard" style="--sx:250px;--sy:40px;--sr:7deg;--ex:196px;--ey:44px;--d:.25s">
+      <div class="swatch" style="background:linear-gradient(135deg,#2c2c2e,#4a4a4d)"></div>
+      <div class="t">Matte black hardware</div>
+      <div class="note">36 pulls needed → $310</div>
+      <div class="chips"><span class="chip">hardware</span><span class="chip">under $500</span></div>
+    </div>
+    <div class="pcard" style="--sx:120px;--sy:120px;--sr:-4deg;--ex:368px;--ey:44px;--d:.4s">
+      <div class="swatch" style="background:linear-gradient(135deg,#f4f1ea,#dcd5c5)"></div>
+      <div class="t">Quartz counters, waterfall edge</div>
+      <div class="note">3 slabs · compare Caesarstone</div>
+      <div class="chips"><span class="chip">counters</span><span class="chip">shortlisted</span></div>
+    </div>
+    <div class="pcard" style="--sx:330px;--sy:230px;--sr:11deg;--ex:24px;--ey:236px;--d:.55s">
+      <div class="swatch" style="background:linear-gradient(135deg,#b7c9bd,#7f9c8b)"></div>
+      <div class="t">Sage island, white oak top</div>
+      <div class="note">paint: BM "Saybrook Sage"</div>
+      <div class="chips"><span class="chip">island</span><span class="chip">paint</span></div>
+    </div>
+    <div class="pcard" style="--sx:200px;--sy:280px;--sr:-12deg;--ex:196px;--ey:236px;--d:.7s">
+      <div class="swatch" style="background:linear-gradient(135deg,#d8dee2,#aab6bd)"></div>
+      <div class="t">Zellige subway backsplash</div>
+      <div class="note">32 sq ft · sample ordered</div>
+      <div class="chips"><span class="chip">tile</span><span class="chip">purchased</span></div>
+    </div>
+    <div class="pcard" style="--sx:60px;--sy:20px;--sr:6deg;--ex:368px;--ey:236px;--d:.85s">
+      <div class="swatch" style="background:linear-gradient(135deg,#e8d9b8,#caa96a)"></div>
+      <div class="t">Brass pendant lights ×3</div>
+      <div class="note">42" spacing over island</div>
+      <div class="chips"><span class="chip">lighting</span><span class="chip">nice to have</span></div>
+    </div>
+  </div>
+</div>
+
+<section class="problem">
+  <div class="wrap">
+    <div>
+      <h2>Pinterest is built for saving.<br>Not for finding.</h2>
+      <p>Thousands of pins, dozens of boards, duplicate saves, zero notes. When it's finally time to buy the faucet, the pin you need is buried under six months of scrolling.</p>
+    </div>
+    <div class="flow" aria-label="Workflow comparison">
+      <div class="bad">without p.s. shelf:</div>
+      <div>find idea <span class="arrow">→</span> save pin <span class="arrow">→</span> forget it <span class="arrow">→</span> search endlessly</div>
+      <div class="good" style="margin-top:18px">with p.s. shelf:</div>
+      <div>save <span class="arrow">→</span> add context <span class="arrow">→</span> auto-organize <span class="arrow">→</span> find instantly <span class="arrow">→</span> build the thing</div>
+    </div>
+  </div>
+</section>
+
+<section class="features" id="features">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="tape">What it does</span>
+      <h2>Your visual second brain</h2>
+      <p>Every pin becomes a real record: searchable, budgeted, and attached to the project it belongs to.</p>
+    </div>
+    <div class="fgrid">
+      <div class="fcard">
+        <h3>Save with context</h3>
+        <p>One click on any pin captures the image, source and description — then asks for the things Pinterest never does: notes, budget, room, priority, status.</p>
+        <div class="ex">notes: "matches the floor sample from Lowe's"</div>
+      </div>
+      <div class="fcard">
+        <h3>Search that actually works</h3>
+        <p>Search across your notes, tags and projects at once. Filter by status and budget instead of scrolling boards.</p>
+        <div class="ex">"white kitchen black hardware under $15k" → 4 pins</div>
+      </div>
+      <div class="fcard">
+        <h3>Projects, not just boards</h3>
+        <p>Group pins into a kitchen remodel, a wedding, a trip. See running budgets and how many decisions you've actually made.</p>
+        <div class="ex">Kitchen remodel · 38 pins · 12 decided · $14,320</div>
+      </div>
+      <div class="fcard">
+        <h3>Duplicate detection</h3>
+        <p>P.S. Shelf recognizes a pin you've already saved and tells you — before your board fills up with five versions of the same sink.</p>
+        <div class="ex">"You saved this pin on March 3."</div>
+      </div>
+      <div class="fcard">
+        <h3>Status tracking</h3>
+        <p>Move ideas from Idea → Shortlisted → Decided → Purchased. Your inspiration becomes a to-do list you can finish.</p>
+        <div class="ex">status: Purchased ✓</div>
+      </div>
+      <div class="fcard">
+        <h3>Your data, exportable</h3>
+        <p>Everything is stored locally and exports to JSON in one click. No lock-in, no scraping of your account, minimal permissions.</p>
+        <div class="ex">ps-shelf-export.json · 412 pins</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="how" id="how">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="tape">How it works</span>
+      <h2>Three steps between inspiration and done</h2>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="num">1</div>
+        <h3>Save from Pinterest</h3>
+        <p>Browse Pinterest like you always do. On any pin, click "Save to P.S. Shelf" and add a note while the idea is fresh.</p>
+      </div>
+      <div class="step">
+        <div class="num">2</div>
+        <h3>Organize into projects</h3>
+        <p>Assign a project, budget and status. P.S. Shelf keeps the running totals so you always know where a project stands.</p>
+      </div>
+      <div class="step">
+        <div class="num">3</div>
+        <h3>Find it when it matters</h3>
+        <p>Standing in the tile aisle? Search your own words — not Pinterest's algorithm — and pull up exactly the pin you need.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="pricing" id="pricing">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="tape">Pricing</span>
+      <h2>Start free. Upgrade when your projects do.</h2>
+    </div>
+    <div class="pgrid">
+      <div class="plan">
+        <h3>Free</h3>
+        <div class="price">$0</div>
+        <div class="per">forever</div>
+        <ul>
+          <li>200 saved pins</li>
+          <li>Notes, tags &amp; rooms</li>
+          <li>Full-text search</li>
+          <li>JSON export</li>
+        </ul>
+        <a class="btn ghost" href="#pricing">Add to Chrome</a>
+      </div>
+      <div class="plan featured">
+        <span class="tape">Most popular</span>
+        <h3>Pro</h3>
+        <div class="price">$4.99</div>
+        <div class="per">per month</div>
+        <ul>
+          <li>Unlimited pins</li>
+          <li>AI summaries &amp; auto-tags</li>
+          <li>Smart Collections</li>
+          <li>Duplicate detection</li>
+          <li>Cloud sync across devices</li>
+        </ul>
+        <a class="btn" href="#">Start Pro</a>
+      </div>
+      <div class="plan">
+        <h3>Power</h3>
+        <div class="price">$7.99</div>
+        <div class="per">per month</div>
+        <ul>
+          <li>Everything in Pro</li>
+          <li>Shared projects &amp; collaboration</li>
+          <li>Budgets &amp; shopping lists</li>
+          <li>Multiple workspaces</li>
+        </ul>
+        <a class="btn ghost" href="#">Start Power</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="final">
+  <div class="wrap">
+    <h2>Your next project starts on Pinterest.<br>Finish it with P.S. Shelf.</h2>
+    <p>Install in ten seconds. Save your first pin with a note and you'll never go back to endless scrolling.</p>
+    <a class="btn" href="#pricing">Add to Chrome — free</a>
+  </div>
+</section>
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <span>© 2026 P.S. Shelf. Not affiliated with Pinterest.</span>
+    <span><a href="/privacy.html">Privacy</a></span>
+  </div>
+</footer>
+
+<script>
+// Signature moment: scattered pins sort into the project grid shortly after load.
+window.addEventListener("load", () => {
+  const board = document.getElementById("board");
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  setTimeout(() => board.classList.add("sorted"), reduce ? 0 : 700);
+});
+</script>
+</body>
+</html>

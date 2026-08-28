@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>You're in — P.S. Shelf Pro</title>
+<meta name="robots" content="noindex">
+<style>
+  :root {
+    --canvas: #0A0F1A;
+    --surface: #111827;
+    --surface-2: #1E293B;
+    --cream: #F8FAFC;
+    --red: #E60023;
+    --purple: #3B82F6;
+    --purple-dim: rgba(59,130,246,0.14);
+    --teal: #22C55E;
+    --teal-dim: rgba(34,197,94,0.12);
+    --muted: #94A3B8;
+    --muted-2: #64748B;
+    --line: #243247;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+    background: var(--canvas);
+    background-image:
+      radial-gradient(ellipse 900px 500px at 50% -10%, rgba(59,130,246,0.16), transparent 60%),
+      radial-gradient(ellipse 700px 500px at 100% 100%, rgba(34,197,94,0.08), transparent 60%);
+    background-repeat: no-repeat;
+    color: var(--cream);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+
+  .wrap {
+    width: 100%;
+    max-width: 420px;
+  }
+
+  .wordmark {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    margin-bottom: 36px;
+  }
+  .wordmark .shelf {
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--cream);
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    padding: 40px 32px 32px;
+    text-align: center;
+    box-shadow: 0 24px 70px rgba(0,0,0,0.45);
+  }
+
+  /* Signature element: a checkmark that draws itself in on load */
+  .check-ring {
+    width: 76px;
+    height: 76px;
+    margin: 0 auto 22px;
+    border-radius: 50%;
+    background: var(--teal-dim);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+  .check-ring::before {
+    content: "";
+    position: absolute;
+    inset: -6px;
+    border-radius: 50%;
+    border: 1px solid rgba(34,201,160,0.25);
+    animation: pulse-ring 2.4s ease-out 0.6s infinite;
+  }
+  .check-ring svg { width: 34px; height: 34px; display: block; }
+  .check-ring path {
+    fill: none;
+    stroke: var(--teal);
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: 40;
+    stroke-dashoffset: 40;
+    animation: draw-check 0.5s ease-out 0.25s forwards;
+  }
+
+  @keyframes draw-check {
+    to { stroke-dashoffset: 0; }
+  }
+  @keyframes pulse-ring {
+    0% { transform: scale(1); opacity: 0.6; }
+    100% { transform: scale(1.35); opacity: 0; }
+  }
+
+  h1 {
+    font-size: 21px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    margin: 0 0 10px;
+  }
+  h1 .spark { color: var(--purple); }
+
+  p.lede {
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--muted);
+    margin: 0 0 28px;
+  }
+  p.lede strong { color: var(--cream); font-weight: 600; }
+
+  .steps {
+    text-align: left;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 6px 16px;
+    margin-bottom: 26px;
+  }
+  .step {
+    display: flex;
+    gap: 12px;
+    padding: 14px 0;
+  }
+  .step + .step { border-top: 1px solid var(--line); }
+  .step-num {
+    flex-shrink: 0;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--purple-dim);
+    color: var(--purple);
+    font-size: 11px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 1px;
+  }
+  .step-body { min-width: 0; }
+  .step-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--cream);
+    margin-bottom: 2px;
+  }
+  .step-desc {
+    font-size: 12.5px;
+    color: var(--muted-2);
+    line-height: 1.45;
+  }
+  .step-desc code {
+    background: rgba(59,130,246,0.08);
+    border: 1px solid var(--line);
+    color: var(--cream);
+    padding: 1px 6px;
+    border-radius: 5px;
+    font-size: 11.5px;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  }
+
+  .cta {
+    display: block;
+    width: 100%;
+    background: var(--purple);
+    color: #fff;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 700;
+    padding: 13px;
+    border-radius: 10px;
+    transition: filter 0.15s, transform 0.15s;
+  }
+  .cta:hover { filter: brightness(1.08); transform: translateY(-1px); }
+  .cta:active { transform: translateY(0); }
+
+  .fine {
+    margin-top: 18px;
+    font-size: 11.5px;
+    color: var(--muted-2);
+    line-height: 1.6;
+  }
+  .fine a { color: var(--muted); }
+
+  .ref {
+    margin-top: 28px;
+    font-size: 10.5px;
+    color: rgba(148,163,184,0.4);
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    word-break: break-all;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .check-ring path { animation: none; stroke-dashoffset: 0; }
+    .check-ring::before { animation: none; display: none; }
+    .cta:hover { transform: none; }
+  }
+
+  @media (max-width: 420px) {
+    .card { padding: 32px 22px 26px; border-radius: 16px; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="wrap">
+    <div class="wordmark"><svg viewBox="0 0 256 256" width="48" height="48" aria-hidden="true"><path d="M 38 14 L 218 14 L 218 240 L 128 202 L 38 240 Z" fill="#E60023"/><text x="128" y="168" font-family="Arial, Helvetica, sans-serif" font-weight="800" font-size="118" fill="#FFFFFF" text-anchor="middle" letter-spacing="-6">PS</text></svg><span class="shelf">Shelf</span></div>
+
+    <div class="card">
+      <div class="check-ring">
+        <svg viewBox="0 0 24 24"><path d="M4 12.5L9.5 18L20 6"/></svg>
+      </div>
+
+      <h1>You're in <span class="spark">✦</span></h1>
+      <p class="lede">Payment confirmed — <strong>P.S. Shelf Pro</strong> is ready to activate. Your license key is on its way to your inbox now.</p>
+
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <div class="step-title">Check your email</div>
+            <div class="step-desc">Look for <strong style="color:var(--cream);font-weight:600;">"Welcome to P.S. Shelf Pro"</strong> — it usually lands within a minute. Check spam if it's not in your inbox.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <div class="step-title">Activate in the extension</div>
+            <div class="step-desc">Open the P.S. Shelf sidebar on Pinterest → <code>⚙ Settings</code> → <code>Plan</code> → paste your key under <code>Activate</code>.</div>
+          </div>
+        </div>
+      </div>
+
+      <a class="cta" href="https://www.pinterest.com" rel="noopener">Open Pinterest →</a>
+
+      <p class="fine">Need a hand? Reply to the license email or reach us anytime — we read every message.</p>
+    </div>
+
+    <p class="ref" id="ref"></p>
+  </div>
+
+  <script>
+    // Show a short order reference for support purposes — read-only, no sensitive data exposed
+    (function () {
+      var params = new URLSearchParams(window.location.search);
+      var sid = params.get('session_id');
+      if (sid) {
+        document.getElementById('ref').textContent = 'Order reference: ' + sid.slice(-12);
+      }
+    })();
+  </script>
+
+</body>
+</html>
